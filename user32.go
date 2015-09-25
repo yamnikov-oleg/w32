@@ -115,6 +115,11 @@ var (
 	procSetWindowsHookEx              = moduser32.NewProc("SetWindowsHookExW")
 	procUnhookWindowsHookEx           = moduser32.NewProc("UnhookWindowsHookEx")
 	procCallNextHookEx                = moduser32.NewProc("CallNextHookEx")
+	// My additions
+	procCreateMenu                    = moduser32.NewProc("CreateMenu")
+	procAppendMenuW                   = moduser32.NewProc("AppendMenuW")
+	procSetMenu                       = moduser32.NewProc("SetMenu")
+	procSystemParametersInfo          = moduser32.NewProc("SystemParametersInfoW")
 )
 
 func RegisterClassEx(wndClassEx *WNDCLASSEX) ATOM {
@@ -976,4 +981,37 @@ func CallNextHookEx(hhk HHOOK, nCode int, wParam WPARAM, lParam LPARAM) LRESULT 
 		uintptr(lParam),
 	)
 	return LRESULT(ret)
+}
+
+func CreateMenu() HMENU {
+	ret, _, _ := procCreateMenu.Call()
+	return HMENU(ret)
+}
+
+func AppendMenu(menu HMENU, flags uint, id uintptr, text string) bool {
+	ret, _, _ := procAppendMenuW.Call(
+		uintptr(menu),
+		uintptr(flags),
+		id,
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(text))),
+	)
+	return ret != 0
+}
+
+func SetMenu(wnd HWND, menu HMENU) bool {
+	ret, _, _ := procSetMenu.Call(
+		uintptr(wnd),
+		uintptr(menu),
+	)
+	return ret != 0
+}
+
+func SystemParametersInfo (action uint32, uiParam uint32, str *SYSTEMPARAMETERSINFO, winini uint32) bool {
+	ret, _, _ := procSystemParametersInfo.Call(
+		uintptr(action),
+		uintptr(uiParam),
+		uintptr(unsafe.Pointer(str)),
+		uintptr(winini),
+	)
+	return ret != 0
 }

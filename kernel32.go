@@ -43,6 +43,10 @@ var (
 	procGetProcessTimes            = modkernel32.NewProc("GetProcessTimes")
 	procSetSystemTime              = modkernel32.NewProc("SetSystemTime")
 	procGetSystemTime              = modkernel32.NewProc("GetSystemTime")
+	// My additions
+	procGlobalMemoryStatus     = modkernel32.NewProc("GlobalMemoryStatusEx")
+	procGetComputerName        = modkernel32.NewProc("GetComputerNameW")
+	procGetEnvironmentVariable = modkernel32.NewProc("GetEnvironmentVariableW")
 )
 
 func GetModuleHandle(modulename string) HINSTANCE {
@@ -310,4 +314,34 @@ func SetSystemTime(time *SYSTEMTIME) bool {
 	ret, _, _ := procSetSystemTime.Call(
 		uintptr(unsafe.Pointer(time)))
 	return ret != 0
+}
+
+// My additions
+
+func GlobalMemoryStatusEx() *MEMORYSTATUSEX {
+	var ms MEMORYSTATUSEX
+	ms.Length = uint32(unsafe.Sizeof(ms))
+	procGlobalMemoryStatus.Call(uintptr(unsafe.Pointer(&ms)))
+	return &ms
+}
+
+func GetComputerName() string {
+	bufSize := 256
+	buffer := make([]uint16, bufSize)
+	procGetComputerName.Call(
+		uintptr(unsafe.Pointer(&buffer[0])),
+		uintptr(unsafe.Pointer(&bufSize)),
+	)
+	return syscall.UTF16ToString(buffer)
+}
+
+func GetEnvironmentVariable(name string) string {
+	bufSize := 256 * 256
+	buffer := make([]uint16, bufSize)
+	procGetEnvironmentVariable.Call(
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))),
+		uintptr(unsafe.Pointer(&buffer[0])),
+		uintptr(unsafe.Pointer(&bufSize)),
+	)
+	return syscall.UTF16ToString(buffer)
 }

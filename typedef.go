@@ -916,3 +916,36 @@ type KBDLLHOOKSTRUCT struct {
 }
 
 type HOOKPROC func(int, WPARAM, LPARAM) LRESULT
+
+// My additions
+
+type SYSTEMPARAMETERSINFO struct {
+	Size              uint32
+	BorderWidth       int32
+    ScrollWidth       int32
+    ScrollHeight      int32
+    CaptionWidth      int32
+    CaptionHeight     int32
+    CaptionFont       LOGFONT
+    SmCaptionWidth    int32
+    SmCaptionHeight   int32
+    SmCaptionFont     LOGFONT
+    MenuWidth         int32
+    MenuHeight        int32
+    MenuFont          LOGFONT
+    StatusFont        LOGFONT
+    MessageFont       LOGFONT
+    PaddedBorderWidth int32
+}
+
+type MEMORYSTATUSEX struct {
+    Length               uint32;
+    MemoryLoad           uint32;
+    TotalPhys            uint64;
+    AvailPhys            uint64;
+    TotalPageFile        uint64;
+    AvailPageFile        uint64;
+    TotalVirtual         uint64;
+    AvailVirtual         uint64;
+    AvailExtendedVirtual uint64;
+}

@@ -32,6 +32,8 @@ var (
 	procOpenService        = modadvapi32.NewProc("OpenServiceW")
 	procStartService       = modadvapi32.NewProc("StartServiceW")
 	procControlService     = modadvapi32.NewProc("ControlService")
+	// My additions
+	procGetUserName = modadvapi32.NewProc("GetUserNameW")
 )
 
 func RegCreateKey(hKey HKEY, subKey string) HKEY {
@@ -137,8 +139,9 @@ func RegSetString(hKey HKEY, subKey string, value string) (errno int) {
 		lptr = unsafe.Pointer(syscall.StringToUTF16Ptr(subKey))
 	}
 	var buf []uint16
+	var err error
 	if len(value) > 0 {
-		buf, err := syscall.UTF16FromString(value)
+		buf, err = syscall.UTF16FromString(value)
 		if err != nil {
 			return ERROR_BAD_FORMAT
 		}
@@ -150,7 +153,7 @@ func RegSetString(hKey HKEY, subKey string, value string) (errno int) {
 		uintptr(0),
 		uintptr(REG_SZ),
 		uintptr(vptr),
-		uintptr(unsafe.Sizeof(buf) + 2)) // 2 is the size of the terminating null character
+		uintptr(len(buf)*2)) // 2 is the size of the terminating null character
 
 	return int(ret)
 }
@@ -379,4 +382,41 @@ func ControlService(hService HANDLE, dwControl uint32, lpServiceStatus *SERVICE_
 		uintptr(unsafe.Pointer(lpServiceStatus)))
 
 	return ret != 0
+}
+
+// My additions
+
+func GetUserName() string {
+	bufSize := 256
+	buffer := make([]uint16, bufSize)
+	procGetUserName.Call(
+		uintptr(unsafe.Pointer(&buffer[0])),
+		uintptr(unsafe.Pointer(&bufSize)),
+	)
+	return syscall.UTF16ToString(buffer)
+}
+
+func RegSetExpandString(hKey HKEY, subKey string, value string) (errno int) {
+	var lptr, vptr unsafe.Pointer
+	if len(subKey) > 0 {
+		lptr = unsafe.Pointer(syscall.StringToUTF16Ptr(subKey))
+	}
+	var buf []uint16
+	var err error
+	if len(value) > 0 {
+		buf, err = syscall.UTF16FromString(value)
+		if err != nil {
+			return ERROR_BAD_FORMAT
+		}
+		vptr = unsafe.Pointer(&buf[0])
+	}
+	ret, _, _ := procRegSetValueEx.Call(
+		uintptr(hKey),
+		uintptr(lptr),
+		uintptr(0),
+		uintptr(REG_EXPAND_SZ),
+		uintptr(vptr),
+		uintptr(len(buf)*2)) // 2 is the size of the terminating null character
+
+	return int(ret)
 }

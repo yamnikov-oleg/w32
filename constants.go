@@ -2679,3 +2679,35 @@ const (
 	WH_SHELL           = 10
 	WH_SYSMSGFILTER    = 6
 )
+
+// My additions
+
+// Menu Flags
+const (
+	MF_STRING = 0x00000000
+	MF_POPUP  = 0x00000010
+)
+
+// System Parameters Info
+const (
+	SPI_GETNONCLIENTMETRICS = 0x0029
+)
+
+// List Box
+const (
+	LB_RESETCONTENT = 0x0184
+	LB_ADDSTRING    = 0x0180
+	LB_GETTEXT      = 0x0189
+	LB_GETSEL       = 0x0187
+	LB_GETCOUNT     = 0x018B
+	LB_SETCURSEL    = 0x0186
+	LB_DELETESTRING = 0x0182
+)
+
+const (
+	LBS_NOTIFY = 0x0001
+)
+
+const (
+	LBN_SELCHANGE = 1
+)

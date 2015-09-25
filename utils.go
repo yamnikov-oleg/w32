@@ -199,3 +199,9 @@ func ComInvoke(disp *IDispatch, dispid int32, dispatch int16, params ...interfac
 	result = &ret
 	return
 }
+
+// My additions
+
+func MAKELONG(a,b uint) uintptr {
+	return uintptr(a + (b << 16))
+}
