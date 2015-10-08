@@ -922,30 +922,48 @@ type HOOKPROC func(int, WPARAM, LPARAM) LRESULT
 type SYSTEMPARAMETERSINFO struct {
 	Size              uint32
 	BorderWidth       int32
-    ScrollWidth       int32
-    ScrollHeight      int32
-    CaptionWidth      int32
-    CaptionHeight     int32
-    CaptionFont       LOGFONT
-    SmCaptionWidth    int32
-    SmCaptionHeight   int32
-    SmCaptionFont     LOGFONT
-    MenuWidth         int32
-    MenuHeight        int32
-    MenuFont          LOGFONT
-    StatusFont        LOGFONT
-    MessageFont       LOGFONT
-    PaddedBorderWidth int32
+	ScrollWidth       int32
+	ScrollHeight      int32
+	CaptionWidth      int32
+	CaptionHeight     int32
+	CaptionFont       LOGFONT
+	SmCaptionWidth    int32
+	SmCaptionHeight   int32
+	SmCaptionFont     LOGFONT
+	MenuWidth         int32
+	MenuHeight        int32
+	MenuFont          LOGFONT
+	StatusFont        LOGFONT
+	MessageFont       LOGFONT
+	PaddedBorderWidth int32
 }
 
 type MEMORYSTATUSEX struct {
-    Length               uint32;
-    MemoryLoad           uint32;
-    TotalPhys            uint64;
-    AvailPhys            uint64;
-    TotalPageFile        uint64;
-    AvailPageFile        uint64;
-    TotalVirtual         uint64;
-    AvailVirtual         uint64;
-    AvailExtendedVirtual uint64;
+	Length               uint32
+	MemoryLoad           uint32
+	TotalPhys            uint64
+	AvailPhys            uint64
+	TotalPageFile        uint64
+	AvailPageFile        uint64
+	TotalVirtual         uint64
+	AvailVirtual         uint64
+	AvailExtendedVirtual uint64
+}
+
+type NOTIFYICONDATA struct {
+	Size             uint32
+	Wnd              HWND
+	ID               uint32
+	Flags            uint32
+	CallbackMessage  uint32
+	Icon             HICON
+	Tip              [128]uint16
+	State            uint32
+	StateMask        uint32
+	Info             [256]uint16
+	TimeoutOrVersion uint32
+	InfoTitle        [64]uint16
+	InfoFlags        uint32
+	Item             GUID
+	BalloonIcon      HICON
 }
