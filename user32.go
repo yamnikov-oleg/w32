@@ -116,10 +116,12 @@ var (
 	procUnhookWindowsHookEx           = moduser32.NewProc("UnhookWindowsHookEx")
 	procCallNextHookEx                = moduser32.NewProc("CallNextHookEx")
 	// My additions
-	procCreateMenu                    = moduser32.NewProc("CreateMenu")
-	procAppendMenuW                   = moduser32.NewProc("AppendMenuW")
-	procSetMenu                       = moduser32.NewProc("SetMenu")
-	procSystemParametersInfo          = moduser32.NewProc("SystemParametersInfoW")
+	procCreateMenu           = moduser32.NewProc("CreateMenu")
+	procAppendMenuW          = moduser32.NewProc("AppendMenuW")
+	procSetMenu              = moduser32.NewProc("SetMenu")
+	procSystemParametersInfo = moduser32.NewProc("SystemParametersInfoW")
+	procTrackPopupMenu       = moduser32.NewProc("TrackPopupMenu")
+	procSetForegroundWindow  = moduser32.NewProc("SetForegroundWindow")
 )
 
 func RegisterClassEx(wndClassEx *WNDCLASSEX) ATOM {
@@ -1006,12 +1008,32 @@ func SetMenu(wnd HWND, menu HMENU) bool {
 	return ret != 0
 }
 
-func SystemParametersInfo (action uint32, uiParam uint32, str *SYSTEMPARAMETERSINFO, winini uint32) bool {
+func SystemParametersInfo(action uint32, uiParam uint32, str *SYSTEMPARAMETERSINFO, winini uint32) bool {
 	ret, _, _ := procSystemParametersInfo.Call(
 		uintptr(action),
 		uintptr(uiParam),
 		uintptr(unsafe.Pointer(str)),
 		uintptr(winini),
+	)
+	return ret != 0
+}
+
+func TrackPopupMenu(menu HMENU, flags uint, x, y int, wnd HWND) bool {
+	ret, _, _ := procTrackPopupMenu.Call(
+		uintptr(menu),
+		uintptr(flags),
+		uintptr(x),
+		uintptr(y),
+		0,
+		uintptr(wnd),
+		0,
+	)
+	return ret != 0
+}
+
+func SetForegroundWindow(wnd HWND) bool {
+	ret, _, _ := procSetForegroundWindow.Call(
+		uintptr(wnd),
 	)
 	return ret != 0
 }
